@@ -1,5 +1,125 @@
-#oi {
-  bourder-radius: 3px;
+:root {
+  --bg: #0b1220;
+  --card: #121a2b;
+  --muted: #94a3b8;
+  --text: #e2e8f0;
+  --accent: #66e3ff;
+  --accent-2: #7c4dff;
+  --danger: #ef4444;
+  --ok: #10b981;
+  --border: #1f2a44;
 }
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji';
+  background: radial-gradient(1200px 600px at 80% -20%, rgba(124,77,255,.15), transparent), var(--bg);
+  color: var(--text);
+}
+
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px; border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(6px);
+}
+.topbar h1 { margin: 0; font-size: 20px; }
+.user-area { display: flex; gap: 8px; align-items: center; }
+
+.tabs {
+  display: flex; gap: 6px; padding: 10px 12px; border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; background: rgba(11,18,32,.8); backdrop-filter: blur(6px); z-index: 10;
+}
+.tab-btn {
+  background: transparent; border: 1px solid var(--border); color: var(--text);
+  padding: 8px 12px; border-radius: 999px; cursor: pointer;
+}
+.tab-btn.active { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(102,227,255,.15) inset; }
+
+.container { max-width: 1100px; margin: 18px auto; padding: 0 16px; }
+.tab { display: none; }
+.tab.active { display: block; }
+
+.section-head { display: flex; gap: 16px; align-items: center; justify-content: space-between; }
+.search input {
+  background: var(--card); border: 1px solid var(--border); color: var(--text);
+  padding: 10px 12px; border-radius: 10px; width: 260px;
+}
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+.grid.two { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+
+.card {
+  background: linear-gradient(180deg, rgba(124,77,255,.08), transparent), var(--card);
+  border: 1px solid var(--border); border-radius: 14px; padding: 14px;
+  box-shadow: 0 6px 16px rgba(0,0,0,.25);
+}
+.card.info { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+
+.field { display: grid; gap: 6px; margin: 10px 0; }
+.field input, .field textarea {
+  background: #0f1627; border: 1px solid var(--border); color: var(--text);
+  padding: 10px 12px; border-radius: 10px; width: 100%;
+}
+.field textarea { resize: vertical; min-height: 180px; }
+
+.row { display: flex; align-items: center; }
+.row.gap { gap: 10px; }
+.row.end { justify-content: flex-end; }
+
+.btn {
+  background: linear-gradient(90deg, var(--accent-2), var(--accent));
+  color: #0b1022; border: none; padding: 10px 14px; border-radius: 10px; cursor: pointer; font-weight: 700;
+}
+.btn:hover { filter: brightness(1.05); }
+.btn:active { transform: translateY(1px); }
+
+.btn.outline {
+  background: transparent; color: var(--text);
+  border: 1px solid var(--border);
+}
+.btn.small { padding: 6px 10px; font-size: 13px; }
+
+.muted { color: var(--muted); }
+.small { font-size: 12px; }
+
+.editor { display: grid; gap: 10px; }
+.rule { padding: 10px 12px; border: 1px dashed var(--border); border-radius: 12px; background: rgba(124,77,255,.06); }
+
+.list { display: grid; gap: 8px; }
+.list .draft {
+  display: grid; gap: 6px; padding: 10px; border: 1px solid var(--border); border-radius: 10px; background: #0f1627;
+}
+
+.book {
+  display: grid; gap: 8px;
+}
+.book h3 { margin: 0; }
+.meta { color: var(--muted); font-size: 12px; }
+
+.modal {
+  border: none; padding: 0; background: rgba(0,0,0,.6);
+}
+.modal::backdrop { background: rgba(0,0,0,.6); }
+.modal-card {
+  background: var(--card); color: var(--text);
+  margin: 10vh auto; max-width: 800px; width: calc(100% - 24px);
+  border: 1px solid var(--border); border-radius: 16px; padding: 16px;
+}
+.book-content {
+  white-space: pre-wrap; /* mantém quebras de linha com segurança */
+  border: 1px solid var(--border); border-radius: 10px; padding: 12px; background: #0f1627;
+}
+
+.footer {
+  padding: 24px 16px; text-align: center; color: var(--muted);
+  border-top: 1px solid var(--border); margin-top: 28px;
+}
+
+/* Estados vazios */
+.empty { text-align: center; padding: 24px; border: 1px dashed var(--border); border-radius: 14px; }
+
+
 
 
