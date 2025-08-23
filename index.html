@@ -1,125 +1,41 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Biblioteca Comunitária</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="topbar">
+  <header>
     <h1>📚 Biblioteca Comunitária</h1>
-    <div id="userArea" class="user-area">
-      <span id="welcomeText" class="muted"></span>
-      <button id="logoutBtn" class="btn outline small" hidden>Sair</button>
-    </div>
+    <p>Escreva e compartilhe seus livros com responsabilidade.</p>
   </header>
 
-  <nav class="tabs">
-    <button class="tab-btn active" data-tab="tab-library">Biblioteca</button>
-    <button class="tab-btn" data-tab="tab-write">Escrever</button>
-    <button class="tab-btn" data-tab="tab-auth">Entrar/Cadastrar</button>
-  </nav>
+  <main>
+    <form id="publicarForm">
+      <label for="idade">Digite sua idade:</label>
+      <input type="number" id="idade" min="1" required>
 
-  <main class="container">
-    <!-- Biblioteca -->
-    <section id="tab-library" class="tab active">
-      <div class="section-head">
-        <h2>Livros publicados</h2>
-        <div class="search">
-          <input id="searchInput" type="search" placeholder="Pesquisar por título ou autor..." />
-        </div>
-      </div>
-      <div id="booksGrid" class="grid"></div>
-      <p id="emptyLibraryMsg" class="muted" hidden>Nenhum livro publicado ainda.</p>
-    </section>
+      <label>
+        <input type="checkbox" id="naoSouRobo"> Não sou um robô 🤖
+      </label>
 
-    <!-- Escrever -->
-    <section id="tab-write" class="tab">
-      <div id="writeGuard" class="card info">
-        <p>Você precisa estar logado para escrever.</p>
-        <button class="btn" data-open-tab="tab-auth">Fazer login / Cadastrar</button>
-      </div>
+      <label for="titulo">Título do Livro:</label>
+      <input type="text" id="titulo" required>
 
-      <div id="editorArea" class="editor" hidden>
-        <h2>Editor de Livro</h2>
-        <div class="rule">
-          <strong>Regra de publicação:</strong>
-          A conta deve ter pelo menos <span id="minAgeDaysText"></span> dias.
-        </div>
+      <label for="conteudo">Conteúdo do Livro:</label>
+      <textarea id="conteudo" rows="5" required></textarea>
 
-        <label class="field">
-          <span>Título</span>
-          <input id="titleInput" type="text" maxlength="120" placeholder="Ex.: Aventuras na Ilha..." />
-        </label>
+      <button type="submit">Publicar</button>
+    </form>
 
-        <label class="field">
-          <span>Conteúdo</span>
-          <textarea id="contentInput" rows="12" placeholder="Escreva seu livro aqui..."></textarea>
-        </label>
-
-        <div class="row gap">
-          <button id="saveDraftBtn" class="btn outline">Salvar rascunho</button>
-          <button id="publishBtn" class="btn">Publicar</button>
-        </div>
-
-        <h3>Seus rascunhos</h3>
-        <div id="draftsList" class="list"></div>
-      </div>
-    </section>
-
-    <!-- Autenticação -->
-    <section id="tab-auth" class="tab">
-      <div class="grid two">
-        <div class="card">
-          <h2>Cadastrar</h2>
-          <label class="field">
-            <span>Usuário</span>
-            <input id="regUser" type="text" maxlength="24" />
-          </label>
-          <label class="field">
-            <span>Senha</span>
-            <input id="regPass" type="password" minlength="4" />
-          </label>
-          <button id="registerBtn" class="btn">Criar conta</button>
-          <p class="muted small">Ao criar a conta, a data é registrada para calcular a idade da conta.</p>
-          <p id="registerMsg" class="msg" role="status"></p>
-        </div>
-
-        <div class="card">
-          <h2>Entrar</h2>
-          <label class="field">
-            <span>Usuário</span>
-            <input id="loginUser" type="text" />
-          </label>
-          <label class="field">
-            <span>Senha</span>
-            <input id="loginPass" type="password" />
-          </label>
-          <button id="loginBtn" class="btn">Entrar</button>
-          <p id="loginMsg" class="msg" role="status"></p>
-        </div>
-      </div>
+    <section id="biblioteca">
+      <h2>📖 Livros Publicados</h2>
+      <ul id="listaLivros"></ul>
     </section>
   </main>
 
-  <!-- Modal simples para ler livro -->
-  <dialog id="readerModal" class="modal">
-    <div class="modal-card">
-      <h3 id="readerTitle"></h3>
-      <p class="muted small" id="readerMeta"></p>
-      <pre id="readerContent" class="book-content"></pre>
-      <div class="row end">
-        <button id="closeReaderBtn" class="btn">Fechar</button>
-      </div>
-    </div>
-  </dialog>
-
-  <footer class="footer">
-    <span class="muted small">Projeto educativo. Dados salvos no seu navegador (localStorage).</span>
-  </footer>
-
-  <!-- aqui trocamos o nome -->
   <script src="script.js"></script>
 </body>
 </html>
