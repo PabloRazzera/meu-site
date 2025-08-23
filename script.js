@@ -1,242 +1,168 @@
-// ===============================
-// Sistema de Biblioteca Online
-// ===============================
-
-// Base de dados (LocalStorage)
-let users = JSON.parse(localStorage.getItem("users")) || [];
-let currentUser = JSON.parse(localStorage.getItem("currentUser")) || null;
-let books = JSON.parse(localStorage.getItem("books")) || [];
-
-// ===============================
-// Funções de autenticação
-// ===============================
-
-function saveData() {
-    localStorage.setItem("users", JSON.stringify(users));
-    localStorage.setItem("books", JSON.stringify(books));
-    localStorage.setItem("currentUser", JSON.stringify(currentUser));
+// -------- Utilidades --------
+function saveData(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+function loadData(key) {
+  return JSON.parse(localStorage.getItem(key)) || [];
 }
 
-function registerUser(username, email, password, confirmPassword, age) {
-    if (age < 12) {
-        alert("Você precisa ter pelo menos 12 anos para se cadastrar.");
-        return false;
-    }
-    if (password !== confirmPassword) {
-        alert("As senhas não conferem!");
-        return false;
-    }
-    if (users.find(u => u.email === email || u.username === username)) {
-        alert("Usuário ou email já cadastrado!");
-        return false;
-    }
+// -------- Estado --------
+let currentUser = null;
+let books = loadData("books");
+let users = loadData("users");
+let selectedBook = null;
 
-    let newUser = {
-        username,
-        email,
-        password,
-        age,
-        reports: 0
-    };
-
-    users.push(newUser);
-    saveData();
-    alert("Conta criada com sucesso!");
-    return true;
+// -------- Modal --------
+function openModal(id) {
+  document.getElementById(id).style.display = "flex";
 }
-
-function loginUser(identifier, password) {
-    let user = users.find(u =>
-        (u.username === identifier || u.email === identifier) && u.password === password
-    );
-    if (user) {
-        currentUser = user;
-        saveData();
-        alert("Login realizado com sucesso!");
-        loadBooks();
-        return true;
-    } else {
-        alert("Usuário ou senha inválidos!");
-        return false;
-    }
+function closeModals() {
+  document.querySelectorAll(".modal").forEach(m => m.style.display = "none");
 }
+document.querySelectorAll(".closeModal").forEach(btn => btn.addEventListener("click", closeModals));
 
-function logoutUser() {
-    currentUser = null;
-    saveData();
-    alert("Você saiu da conta.");
-    location.reload();
-}
+// -------- Registro --------
+document.getElementById("registerSubmit").addEventListener("click", () => {
+  const username = document.getElementById("regUsername").value;
+  const email = document.getElementById("regEmail").value;
+  const age = parseInt(document.getElementById("regAge").value);
+  const pass = document.getElementById("regPassword").value;
+  const confirm = document.getElementById("regConfirmPassword").value;
 
-// ===============================
-// Funções de Livros
-// ===============================
+  if (!username || !email || !pass) return alert("Preencha todos os campos!");
+  if (age < 12) return alert("Idade mínima: 12 anos");
+  if (pass !== confirm) return alert("Senhas não conferem");
 
-function createBook(title, cover, theme, isPrivate, content, font) {
-    if (!currentUser) {
-        alert("Você precisa estar logado para criar um livro!");
-        return;
-    }
+  if (users.find(u => u.username === username || u.email === email)) {
+    return alert("Usuário ou email já existem!");
+  }
 
-    let book = {
-        id: Date.now(),
-        author: currentUser.username,
-        title,
-        cover,
-        theme,
-        isPrivate,
-        content,
-        font,
-        likes: 0,
-        dislikes: 0,
-        reports: 0,
-        comments: []
-    };
-
-    books.push(book);
-    saveData();
-    alert("Livro criado com sucesso!");
-    loadBooks();
-}
-
-function toggleLike(bookId, type) {
-    let book = books.find(b => b.id === bookId);
-    if (!book) return;
-
-    if (type === "like") book.likes++;
-    else if (type === "dislike") book.dislikes++;
-
-    saveData();
-    loadBooks();
-}
-
-function reportBook(bookId) {
-    let book = books.find(b => b.id === bookId);
-    if (book) {
-        book.reports++;
-        saveData();
-        alert("Livro denunciado!");
-    }
-}
-
-function reportUser(username) {
-    let user = users.find(u => u.username === username);
-    if (user) {
-        user.reports++;
-        saveData();
-        alert("Conta denunciada!");
-    }
-}
-
-function addComment(bookId, comment) {
-    let book = books.find(b => b.id === bookId);
-    if (book && currentUser) {
-        book.comments.push({
-            user: currentUser.username,
-            text: comment
-        });
-        saveData();
-        loadBooks();
-    }
-}
-
-// ===============================
-// Exibir Livros
-// ===============================
-
-function loadBooks(search = "") {
-    let feed = document.getElementById("feed");
-    if (!feed) return;
-
-    feed.innerHTML = "";
-
-    books
-        .filter(b => !b.isPrivate || b.author === currentUser?.username)
-        .filter(b => b.title.toLowerCase().includes(search.toLowerCase()))
-        .forEach(book => {
-            let div = document.createElement("div");
-            div.className = "book-card";
-            div.innerHTML = `
-                <img src="${book.cover}" alt="Capa" class="book-cover">
-                <h3>${book.title}</h3>
-                <p>Autor: ${book.author}</p>
-                <p>Tema: ${book.theme}</p>
-                <p style="font-family:${book.font}">${book.content.substring(0,100)}...</p>
-                <button onclick="toggleLike(${book.id}, 'like')">👍 ${book.likes}</button>
-                <button onclick="toggleLike(${book.id}, 'dislike')">👎 ${book.dislikes}</button>
-                <button onclick="reportBook(${book.id})">🚨 Denunciar Livro</button>
-                <button onclick="reportUser('${book.author}')">🚨 Denunciar Autor</button>
-                <div>
-                    <input type="text" id="comment-${book.id}" placeholder="Escreva um comentário...">
-                    <button onclick="addComment(${book.id}, document.getElementById('comment-${book.id}').value)">Comentar</button>
-                </div>
-                <div>
-                    <h4>Comentários:</h4>
-                    <ul>
-                        ${book.comments.map(c => `<li><b>${c.user}:</b> ${c.text}</li>`).join("")}
-                    </ul>
-                </div>
-            `;
-            feed.appendChild(div);
-        });
-}
-
-// ===============================
-// Pesquisa
-// ===============================
-
-function searchBooks() {
-    let query = document.getElementById("search").value;
-    loadBooks(query);
-}
-
-// ===============================
-// Proteção contra prints (simulada)
-// ===============================
-document.addEventListener("keydown", (e) => {
-    if (e.key === "PrintScreen") {
-        alert("Prints não são permitidos!");
-        e.preventDefault();
-    }
+  users.push({ username, email, password: pass });
+  saveData("users", users);
+  alert("Conta criada!");
+  closeModals();
 });
 
-// ===============================
-// Exemplo de integração com botões
-// ===============================
+// -------- Login --------
+document.getElementById("loginSubmit").addEventListener("click", () => {
+  const userInput = document.getElementById("loginUsername").value;
+  const pass = document.getElementById("loginPassword").value;
 
-// Registro
-document.getElementById("registerBtn")?.addEventListener("click", () => {
-    let username = document.getElementById("reg-username").value;
-    let email = document.getElementById("reg-email").value;
-    let password = document.getElementById("reg-password").value;
-    let confirmPassword = document.getElementById("reg-confirm").value;
-    let age = parseInt(document.getElementById("reg-age").value);
+  const user = users.find(u => (u.username === userInput || u.email === userInput) && u.password === pass);
+  if (!user) return alert("Credenciais inválidas!");
 
-    registerUser(username, email, password, confirmPassword, age);
+  currentUser = user;
+  alert("Bem-vindo, " + user.username);
+  document.getElementById("btnLogin").style.display = "none";
+  document.getElementById("btnRegister").style.display = "none";
+  document.getElementById("btnLogout").style.display = "inline";
+  document.getElementById("btnNewBook").style.display = "block";
+  closeModals();
 });
 
-// Login
-document.getElementById("loginBtn")?.addEventListener("click", () => {
-    let identifier = document.getElementById("login-identifier").value;
-    let password = document.getElementById("login-password").value;
-
-    loginUser(identifier, password);
+// -------- Logout --------
+document.getElementById("btnLogout").addEventListener("click", () => {
+  currentUser = null;
+  document.getElementById("btnLogin").style.display = "inline";
+  document.getElementById("btnRegister").style.display = "inline";
+  document.getElementById("btnLogout").style.display = "none";
+  document.getElementById("btnNewBook").style.display = "none";
 });
 
-// Criar Livro
-document.getElementById("createBookBtn")?.addEventListener("click", () => {
-    let title = document.getElementById("book-title").value;
-    let cover = document.getElementById("book-cover").value;
-    let theme = document.getElementById("book-theme").value;
-    let isPrivate = document.getElementById("book-private").checked;
-    let content = document.getElementById("book-content").value;
-    let font = document.getElementById("book-font").value;
+// -------- Criar Livro --------
+document.getElementById("createBook").addEventListener("click", () => {
+  if (!currentUser) return alert("Faça login primeiro!");
+  const title = document.getElementById("bookTitle").value;
+  const theme = document.getElementById("bookTheme").value;
+  const cover = document.getElementById("bookCover").value || "https://via.placeholder.com/150";
+  const content = document.getElementById("bookContent").value;
+  const isPrivate = document.getElementById("bookPrivate").checked;
 
-    createBook(title, cover, theme, isPrivate, content, font);
+  if (!title || !content) return alert("Preencha o título e conteúdo");
+
+  const book = {
+    id: Date.now(),
+    title, theme, cover, content,
+    private: isPrivate,
+    author: currentUser.username,
+    likes: 0, dislikes: 0,
+    comments: []
+  };
+
+  books.push(book);
+  saveData("books", books);
+  renderBooks();
+  closeModals();
 });
 
-// Pesquisa
-document.getElementById("searchBtn")?.addEventListener("click", searchBooks);
+// -------- Renderizar Livros --------
+function renderBooks() {
+  const container = document.getElementById("booksList");
+  container.innerHTML = "";
+  books.filter(b => !b.private).forEach(book => {
+    const div = document.createElement("div");
+    div.className = "book-card";
+    div.innerHTML = `
+      <img src="${book.cover}">
+      <h3>${book.title}</h3>
+      <p><b>${book.theme}</b></p>
+      <small>Autor: ${book.author}</small>
+    `;
+    div.addEventListener("click", () => openBook(book));
+    container.appendChild(div);
+  });
+}
+renderBooks();
 
-// Carregar livros ao abrir
-loadBooks();
+// -------- Abrir Livro --------
+function openBook(book) {
+  selectedBook = book;
+  document.getElementById("readBookTitle").innerText = book.title;
+  document.getElementById("readBookCover").src = book.cover;
+  document.getElementById("readBookTheme").innerText = "Tema: " + book.theme;
+  document.getElementById("readBookContent").innerText = book.content;
+  renderComments();
+  openModal("readBookModal");
+}
+
+// -------- Likes/Dislikes --------
+document.getElementById("likeBtn").addEventListener("click", () => {
+  if (!currentUser) return alert("Faça login!");
+  selectedBook.likes++;
+  saveData("books", books);
+  alert("Você curtiu!");
+});
+document.getElementById("dislikeBtn").addEventListener("click", () => {
+  if (!currentUser) return alert("Faça login!");
+  selectedBook.dislikes++;
+  saveData("books", books);
+  alert("Você não curtiu!");
+});
+document.getElementById("reportBtn").addEventListener("click", () => {
+  alert("Livro denunciado!");
+});
+
+// -------- Comentários --------
+function renderComments() {
+  const list = document.getElementById("commentsList");
+  list.innerHTML = "";
+  selectedBook.comments.forEach(c => {
+    const p = document.createElement("p");
+    p.innerText = c.author + ": " + c.text;
+    list.appendChild(p);
+  });
+}
+document.getElementById("addComment").addEventListener("click", () => {
+  if (!currentUser) return alert("Faça login!");
+  const text = document.getElementById("newComment").value;
+  if (!text) return;
+  selectedBook.comments.push({ author: currentUser.username, text });
+  saveData("books", books);
+  document.getElementById("newComment").value = "";
+  renderComments();
+});
+
+// -------- Botões Globais --------
+document.getElementById("btnLogin").addEventListener("click", () => openModal("loginModal"));
+document.getElementById("btnRegister").addEventListener("click", () => openModal("registerModal"));
+document.getElementById("btnNewBook").addEventListener("click", () => openModal("newBookModal"));
