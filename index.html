@@ -1,40 +1,197 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Biblioteca Comunitária</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
+  <div id="watermark"></div>
+  <header class="topbar">
     <h1>📚 Biblioteca Comunitária</h1>
-    <p>Escreva e compartilhe seus livros com responsabilidade.</p>
+    <div class="actions">
+      <input id="searchInput" type="search" placeholder="Pesquisar título, autor ou tema..." />
+      <button id="newBookBtn" class="btn">+ Novo livro</button>
+      <div id="userBox" class="user-box">
+        <span id="userInfo" class="muted">Não logado</span>
+        <button id="openAuthBtn" class="btn outline">Entrar / Cadastrar</button>
+        <button id="logoutBtn" class="btn outline" hidden>Sair</button>
+      </div>
+    </div>
   </header>
 
-  <main>
-    <form id="publicarForm">
-      <label for="idade">Digite sua idade:</label>
-      <input type="number" id="idade" min="1" required>
-
-      <label>
-        <input type="checkbox" id="naoSouRobo"> Não sou um robô 🤖
-      </label>
-
-      <label for="titulo">Título do Livro:</label>
-      <input type="text" id="titulo" required>
-
-      <label for="conteudo">Conteúdo do Livro:</label>
-      <textarea id="conteudo" rows="5" required></textarea>
-
-      <button type="submit">Publicar</button>
-    </form>
-
-    <section id="biblioteca">
-      <h2>📖 Livros Publicados</h2>
-      <ul id="listaLivros"></ul>
-    </section>
+  <main class="container">
+    <section id="feed" class="grid"></section>
+    <p id="emptyMsg" class="muted" hidden>Nenhum livro encontrado.</p>
   </main>
+
+  <!-- Auth Modal -->
+  <dialog id="authModal" class="modal">
+    <div class="modal-card">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="loginTab">Entrar</button>
+        <button class="tab-btn" data-tab="registerTab">Cadastrar</button>
+      </div>
+
+      <div id="loginTab" class="tab active">
+        <label class="field">
+          <span>E-mail ou usuário</span>
+          <input id="loginUser" type="text" />
+        </label>
+        <label class="field">
+          <span>Senha</span>
+          <input id="loginPass" type="password" />
+        </label>
+        <button id="loginBtn" class="btn">Entrar</button>
+        <div class="divider"><span>ou</span></div>
+        <button id="googleBtn" class="btn google">Continuar com Google (demo)</button>
+        <p id="loginMsg" class="msg"></p>
+      </div>
+
+      <div id="registerTab" class="tab">
+        <label class="field">
+          <span>Nome de usuário</span>
+          <input id="regUser" type="text" maxlength="24" />
+        </label>
+        <label class="field">
+          <span>E-mail</span>
+          <input id="regEmail" type="email" />
+        </label>
+        <label class="field">
+          <span>Idade</span>
+          <input id="regAge" type="number" min="1" />
+        </label>
+        <label class="field">
+          <span>Senha</span>
+          <input id="regPass" type="password" minlength="6" />
+        </label>
+        <label class="field">
+          <span>Confirmar senha</span>
+          <input id="regPass2" type="password" minlength="6" />
+        </label>
+        <button id="registerBtn" class="btn">Criar conta</button>
+        <p class="muted small">É necessário ter 12 anos ou mais.</p>
+        <p id="registerMsg" class="msg"></p>
+      </div>
+
+      <div class="row end">
+        <button class="btn" data-close-modal="authModal">Fechar</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Book Editor Modal -->
+  <dialog id="editorModal" class="modal">
+    <div class="modal-card large">
+      <h2>Novo livro</h2>
+      <div class="grid two">
+        <div>
+          <label class="field">
+            <span>Título</span>
+            <input id="bookTitle" type="text" maxlength="120" />
+          </label>
+
+          <label class="field">
+            <span>Tema do livro</span>
+            <select id="bookTheme">
+              <option value="default">Padrão</option>
+              <option value="ocean">Oceano</option>
+              <option value="forest">Floresta</option>
+              <option value="sunset">Pôr-do-sol</option>
+              <option value="mono">Monocromático</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Privacidade</span>
+            <select id="bookVisibility">
+              <option value="public">Público</option>
+              <option value="private">Privado (só você vê)</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Capa (opcional)</span>
+            <input id="coverInput" type="file" accept="image/*" />
+          </label>
+          <div class="row gap">
+            <button id="genCoverBtn" class="btn outline">Gerar capa</button>
+            <button id="clearCoverBtn" class="btn outline">Remover capa</button>
+          </div>
+          <div id="coverPreview" class="cover-preview"></div>
+        </div>
+
+        <div>
+          <div class="page-toolbar">
+            <button id="addPageBtn" class="btn small">+ Página</button>
+            <button id="removePageBtn" class="btn small outline">Excluir página</button>
+            <select id="pageFont">
+              <option value="serif">Serif</option>
+              <option value="sans-serif">Sans</option>
+              <option value="monospace">Mono</option>
+              <option value="cursive">Cursive</option>
+            </select>
+            <span class="muted small" id="pageIndexLabel">Página 1/1</span>
+          </div>
+          <textarea id="pageText" rows="10" placeholder="Escreva o texto da página..."></textarea>
+          <div class="draw-wrap">
+            <canvas id="drawCanvas" width="640" height="360"></canvas>
+            <div class="row gap">
+              <button id="drawClearBtn" class="btn small outline">Limpar desenho</button>
+              <label class="field-inline">
+                <span>Espessura</span>
+                <input id="penSize" type="range" min="1" max="16" value="3" />
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row gap end">
+        <button id="saveBookBtn" class="btn">Publicar</button>
+        <button class="btn outline" data-close-modal="editorModal">Cancelar</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Reader Modal -->
+  <dialog id="readerModal" class="modal">
+    <div class="modal-card huge">
+      <div id="readerHeader" class="reader-header">
+        <img id="readerCover" alt="Capa" />
+        <div>
+          <h2 id="readerTitle"></h2>
+          <p id="readerMeta" class="muted small"></p>
+          <div class="row gap">
+            <button id="likeBtn" class="btn small">👍 Like <span id="likeCount">0</span></button>
+            <button id="dislikeBtn" class="btn small outline">👎 Dislike <span id="dislikeCount">0</span></button>
+            <button id="reportBookBtn" class="btn small outline danger">🚩 Denunciar livro</button>
+            <button id="reportAuthorBtn" class="btn small outline danger">🚩 Denunciar autor</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="readerPages" class="reader-pages"></div>
+
+      <div class="comments">
+        <h3>Comentários</h3>
+        <div id="commentsList" class="list"></div>
+        <div id="commentForm" class="row gap">
+          <input id="commentInput" type="text" placeholder="Adicionar comentário..." />
+          <button id="sendCommentBtn" class="btn">Enviar</button>
+        </div>
+      </div>
+
+      <div class="row end">
+        <button class="btn" data-close-modal="readerModal">Fechar</button>
+      </div>
+    </div>
+  </dialog>
+
+  <footer class="footer">
+    <span class="muted small">MVP educativo — dados ficam no seu navegador (localStorage).</span>
+  </footer>
 
   <script src="script.js"></script>
 </body>
