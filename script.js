@@ -126,7 +126,6 @@ function canPublish(user, title, content) {
   if (!title || title.trim().length < 3) errors.push("Título muito curto.");
   if (!content || content.trim().length < 20) errors.push("Conteúdo muito curto (mín. 20 caracteres).");
 
-  // Idade da conta
   if (user) {
     const age = daysBetween(user.createdAt);
     if (age < MIN_ACCOUNT_AGE_DAYS) {
@@ -134,7 +133,6 @@ function canPublish(user, title, content) {
     }
   }
 
-  // Bloqueio simples por palavras (case-insensitive)
   const lowered = `${title} ${content}`.toLowerCase();
   const bad = BLOCKED_WORDS.find(w => w && lowered.includes(w.toLowerCase()));
   if (bad) errors.push("Seu texto contém termos proibidos pelas regras.");
@@ -192,7 +190,6 @@ $("#publishBtn").addEventListener("click", () => {
   };
   books.push(book); save("books", books);
 
-  // Limpa editor
   $("#titleInput").value = "";
   $("#contentInput").value = "";
 
@@ -258,7 +255,7 @@ function renderDrafts() {
         renderDrafts();
       }
     }
-  }, { once: true }); // evita múltiplos listeners duplicados
+  }, { once: true });
 }
 
 // ======== Biblioteca (listar/ler) ========
@@ -323,13 +320,9 @@ $("#searchInput").addEventListener("input", renderLibrary);
 
 // ======== Inicialização ========
 function init() {
-  // texto do cabeçalho de regra
   $("#minAgeDaysText").textContent = MIN_ACCOUNT_AGE_DAYS.toString();
   updateUserArea();
   renderLibrary();
   renderDrafts();
 }
 init();
-
-
-
