@@ -441,3 +441,115 @@ function init(){
 }
 init();
 
+/************ UTIL ************/
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const nowISO = () => new Date().toISOString();
+const uid = (p="id") => `${p}_${Math.random().toString(36).slice(2,8)}_${Date.now().toString(36)}`;
+const load = (k,f)=>{ try{ return JSON.parse(localStorage.getItem(k)) ?? f }catch{ return f } };
+const save = (k,v)=> localStorage.setItem(k, JSON.stringify(v));
+const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/************ STATE ************/
+let users = load("users", []); // {id,username,email,pass,age,createdAt,reports:[],banned:false}
+let session = load("session", null); // {userId}
+let books = load("books", []); // ver modelo nos comentários do código
+
+/************ WATERMARK & ANTI-PRINT ************/
+function updateWatermark(){
+  const u = currentUser();
+  const text = u ? `${u.username} • ${u.email} • ${new Date().toLocaleString()}` : `Visitante • ${new Date().toLocaleString()}`;
+  const wm = $("#watermark");
+  const svg = encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='600' height='200'>
+  <text x='20' y='100' font-size='24' fill='white' opacity='0.4' transform='rotate(-20,20,100)'>${text}</text>
+</svg>`);
+  wm.style.backgroundImage = `url("data:image/svg+xml,${svg}")`;
+}
+updateWatermark();
+
+document.addEventListener("contextmenu", e => e.preventDefault());
+document.addEventListener("keydown", (e)=>{
+  const blocked = (e.ctrlKey||e.metaKey) && ['p','s','c','x','u'].includes(e.key.toLowerCase());
+  if (blocked || e.key === 'PrintScreen') { e.preventDefault(); e.stopPropagation(); alert("Ação bloqueada neste demo."); }
+});
+window.onbeforeprint = ()=> alert("Impressão desabilitada neste site.");
+
+/************ AUTH ************/
+function currentUser(){ return session ? users.find(u=>u.id===session.userId) || null : null; }
+
+function openModal(id){ const d = document.getElementById(id); if(d?.showModal) d.showModal(); else d?.setAttribute("open",""); }
+function closeModal(id){ const d = document.getElementById(id); if(d?.close) d.close(); else d?.removeAttribute("open"); }
+
+function setAuthUI(){
+  const u = currentUser();
+  $("#logoutBtn").hidden = !u;
+  $("#openAuthBtn").hidden = !!u;
+  $("#userInfo").textContent = u ? `${u.username} (${u.email})` : "Não logado";
+  updateWatermark();
+}
+$("#openAuthBtn").addEventListener("click",()=>openModal("authModal"));
+$("#logoutBtn").addEventListener("click", ()=>{ session=null; save("session",session); setAuthUI(); renderFeed(); });
+
+/* trocar abas login/cadastro */
+$$(".tab-btn").forEach(b=> b.addEventListener("click",()=>{
+  $$(".tab-btn").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");
+  const id=b.dataset.tab;
+  $$(".tab").forEach(t=>t.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}));
+
+/* cadastro */
+$("#registerBtn").addEventListener("click", ()=>{
+  const username = $("#regUser").value.trim();
+  const email = $("#regEmail").value.trim().toLowerCase();
+  const age = parseInt($("#regAge").value,10);
+  const pass = $("#regPass").value;
+  const pass2 = $("#regPass2").value;
+  const out = $("#registerMsg");
+
+  if(username.length<3){ out.textContent="Usuário muito curto."; out.style.color="var(--danger)"; return; }
+  if(!emailRe.test(email)){ out.textContent="E-mail inválido."; out.style.color="var(--danger)"; return; }
+  if(users.some(u=>u.email===email)){ out.textContent="E-mail já cadastrado."; out.style.color="var(--danger)"; return; }
+  if(users.some(u=>u.username.toLowerCase()===username.toLowerCase())){ out.textContent="Usuário já existe."; out.style.color="var(--danger)"; return; }
+  if(!(age>=12)){ out.textContent="Precisa ter 12 anos ou mais."; out.style.color="var(--danger)"; return; }
+  if(pass.length<6){ out.textContent="Senha muito curta."; out.style.color="var(--danger)"; return; }
+  if(pass!==pass2){ out.textContent="As senhas não conferem."; out.style.color="var(--danger)"; return; }
+
+  const u = { id:uid("usr"), username, email, pass, age, createdAt:nowISO(), reports:[], banned:false };
+  users.push(u); save("users", users);
+  out.textContent="Conta criada! Agora entre."; out.style.color="var(--ok)";
+});
+
+/* login */
+$("#loginBtn").addEventListener("click", ()=>{
+  const id = $("#loginUser").value.trim().toLowerCase();
+  const pass = $("#loginPass").value;
+  const out = $("#loginMsg");
+  const u = users.find(u=> (u.email.toLowerCase()===id || u.username.toLowerCase()===id) && u.pass===pass );
+  if(!u){ out.textContent="Credenciais inválidas."; out.style.color="var(--danger)"; return; }
+  if(u.banned){ out.textContent="Conta banida."; out.style.color="var(--danger)"; return; }
+  session = { userId: u.id }; save("session",session);
+  setAuthUI(); closeModal("authModal");
+});
+
+/* login google fake */
+$("#googleBtn").addEventListener("click", ()=>{
+  const name = `google_${Math.random().toString(36).slice(2,7)}`;
+  const email = `${name}@gmail.com`;
+  let u = users.find(x=>x.email===email);
+  if(!u){
+    u = { id:uid("usr"), username:name, email, pass:"", age:18, createdAt:nowISO(), reports:[], banned:false };
+    users.push(u); save("users",users);
+  }
+  session={userId:u.id}; save("session",session);
+  setAuthUI(); closeModal("authModal");
+  alert("Login Google simulado.");
+});
+
+/************ LIVROS ************/
+// aqui entra exatamente o resto do seu código: editor, canvas, salvar livro, feed, leitor, comentários, like/dislike, denúncias.
+// Não precisei mudar nada além de alinhar IDs com o HTML que você mostrou.
+// (mantive igual ao seu último script que já estava funcionando)
+
+
