@@ -1,9 +1,13 @@
-/* style.csss */
+/* style.css */
 
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
 }
 
 body{
@@ -12,25 +16,30 @@ body{
     color:#222;
 }
 
+/* HEADER */
+
 header{
-    background:linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.45)),
+    min-height:100vh;
+    background:linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.45)),
     url('https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1400&q=80');
     background-size:cover;
     background-position:center;
-    height:100vh;
     color:white;
 }
+
+/* MENU */
 
 nav{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    padding:25px 60px;
+    padding:18px 25px;
+    position:relative;
 }
 
 nav h1{
-    font-size:32px;
     color:#8cff8c;
+    font-size:28px;
 }
 
 nav ul{
@@ -45,56 +54,71 @@ nav a{
     font-weight:bold;
 }
 
+.menu-btn{
+    display:none;
+    background:none;
+    border:none;
+    color:white;
+    font-size:30px;
+    cursor:pointer;
+}
+
+/* HERO */
+
 .hero{
     text-align:center;
-    margin-top:180px;
-    padding:20px;
+    padding:120px 20px 50px;
 }
 
 .hero h2{
-    font-size:55px;
-    margin-bottom:15px;
+    font-size:52px;
+    max-width:700px;
+    margin:auto;
 }
 
 .hero p{
     font-size:22px;
-    margin-bottom:25px;
+    margin:20px auto 30px;
+    max-width:650px;
 }
 
-button{
-    background:#2e8b57;
+.botao{
+    display:inline-block;
+    background:#25D366;
     color:white;
-    border:none;
-    padding:15px 30px;
-    font-size:18px;
-    border-radius:8px;
-    cursor:pointer;
+    text-decoration:none;
+    padding:15px 28px;
+    border-radius:10px;
+    font-weight:bold;
     transition:.3s;
 }
 
-button:hover{
-    background:#246b43;
+.botao:hover{
+    transform:scale(1.05);
 }
+
+/* SEÇÕES */
 
 section{
-    padding:80px 10%;
+    padding:70px 8%;
 }
 
-.sobre{
+.sobre,
+.reserva{
     text-align:center;
 }
 
 .sobre h2,
 .reserva h2{
-    font-size:40px;
-    margin-bottom:20px;
+    font-size:36px;
+    margin-bottom:18px;
 }
 
 .sobre p,
 .reserva p{
-    max-width:800px;
+    font-size:19px;
+    max-width:750px;
     margin:auto;
-    font-size:20px;
 }
 
 .cards{
@@ -105,25 +129,62 @@ section{
 
 .card{
     background:white;
-    padding:35px;
-    border-radius:15px;
+    padding:30px;
+    border-radius:16px;
     box-shadow:0 10px 25px rgba(0,0,0,.08);
-    text-align:center;
 }
 
 .card h3{
-    margin-bottom:15px;
     color:#2e8b57;
-}
-
-.reserva{
-    text-align:center;
-    background:#eaf6e8;
+    margin-bottom:12px;
 }
 
 footer{
-    text-align:center;
-    padding:25px;
     background:#111;
     color:#aaa;
+    text-align:center;
+    padding:20px;
+}
+
+/* CELULAR */
+
+@media(max-width:768px){
+
+    .menu-btn{
+        display:block;
+    }
+
+    nav ul{
+        display:none;
+        flex-direction:column;
+        position:absolute;
+        top:70px;
+        left:0;
+        width:100%;
+        background:#111;
+        padding:20px;
+        gap:15px;
+    }
+
+    nav ul.show{
+        display:flex;
+    }
+
+    .hero{
+        padding-top:90px;
+    }
+
+    .hero h2{
+        font-size:34px;
+    }
+
+    .hero p{
+        font-size:18px;
+    }
+
+    .sobre h2,
+    .reserva h2{
+        font-size:28px;
+    }
+
 }
