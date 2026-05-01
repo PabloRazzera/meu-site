@@ -1,4 +1,4 @@
-<!-- index.hml -->
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -12,17 +12,23 @@
 <header>
     <nav>
         <h1>Green Garden</h1>
-        <ul>
+
+        <button class="menu-btn" onclick="abrirMenu()">☰</button>
+
+        <ul id="menu">
             <li><a href="#sobre">Sobre</a></li>
             <li><a href="#galeria">Galeria</a></li>
-            <li><a href="#reserva">Reservar</a></li>
+            <li><a href="#reserva">Agendar</a></li>
         </ul>
     </nav>
 
     <section class="hero">
         <h2>Hospede-se em meio à natureza</h2>
-        <p>Conforto, sofisticação e tranquilidade em uma cabana única.</p>
-        <button onclick="reservar()">Fazer Reserva</button>
+        <p>Conforto, sofisticação e tranquilidade em uma cabana exclusiva.</p>
+
+        <a class="botao" href="https://wa.me/555499786413?text=Oi%20Green%20Garden!%20Gostaria%20de%20agendar%20uma%20conversa%20sobre%20hospedagem." target="_blank">
+            Agendar Conversa
+        </a>
     </section>
 </header>
 
@@ -30,32 +36,36 @@
     <h2>Sobre a Cabana</h2>
     <p>
         A Green Garden oferece uma experiência premium em hospedagem,
-        cercada por natureza exuberante, design moderno e máximo conforto.
-        Ideal para casais, descanso ou momentos especiais.
+        cercada por natureza, conforto moderno e total privacidade.
     </p>
 </section>
 
 <section id="galeria" class="cards">
+
     <div class="card">
         <h3>Suíte Luxo</h3>
-        <p>Cama king size, vista panorâmica e hidromassagem.</p>
+        <p>Cama premium, vista incrível e ambiente acolhedor.</p>
     </div>
 
     <div class="card">
         <h3>Natureza Total</h3>
-        <p>Área privativa rodeada por jardins e silêncio absoluto.</p>
+        <p>Jardins privativos e clima perfeito para descanso.</p>
     </div>
 
     <div class="card">
-        <h3>Experiência Premium</h3>
-        <p>Café da manhã especial e atendimento personalizado.</p>
+        <h3>Atendimento Especial</h3>
+        <p>Recepção personalizada para sua melhor experiência.</p>
     </div>
+
 </section>
 
 <section id="reserva" class="reserva">
-    <h2>Reserve Agora</h2>
-    <p>Entre em contato e garanta sua estadia exclusiva.</p>
-    <button onclick="reservar()">Solicitar Reserva</button>
+    <h2>Agende Agora</h2>
+    <p>Fale conosco diretamente no WhatsApp.</p>
+
+    <a class="botao" href="https://wa.me/555499786413?text=Oi%20Green%20Garden!%20Gostaria%20de%20mais%20informações%20sobre%20hospedagem." target="_blank">
+        Chamar no WhatsApp
+    </a>
 </section>
 
 <footer>
