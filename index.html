@@ -1,40 +1,67 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Meu Site</title>
-
-<style>
-body{
-    font-family: Arial, sans-serif;
-    background:#111;
-    color:white;
-    text-align:center;
-    padding-top:100px;
-}
-button{
-    padding:15px 25px;
-    font-size:18px;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
-}
-</style>
+<title>Green Garden | Cabana Exclusiva</title>
+<link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<h1>Olá Mundo!</h1>
-<p>Meu primeiro script HTML</p>
+<header>
+    <nav>
+        <h1>Green Garden</h1>
+        <ul>
+            <li><a href="#sobre">Sobre</a></li>
+            <li><a href="#galeria">Galeria</a></li>
+            <li><a href="#reserva">Reservar</a></li>
+        </ul>
+    </nav>
 
-<button onclick="mensagem()">Clique Aqui</button>
+    <section class="hero">
+        <h2>Hospede-se em meio à natureza</h2>
+        <p>Conforto, sofisticação e tranquilidade em uma cabana única.</p>
+        <button onclick="reservar()">Fazer Reserva</button>
+    </section>
+</header>
 
-<script>
-function mensagem(){
-    alert("Funcionou!");
-}
-</script>
+<section id="sobre" class="sobre">
+    <h2>Sobre a Cabana</h2>
+    <p>
+        A Green Garden oferece uma experiência premium em hospedagem,
+        cercada por natureza exuberante, design moderno e máximo conforto.
+        Ideal para casais, descanso ou momentos especiais.
+    </p>
+</section>
 
+<section id="galeria" class="cards">
+    <div class="card">
+        <h3>Suíte Luxo</h3>
+        <p>Cama king size, vista panorâmica e hidromassagem.</p>
+    </div>
+
+    <div class="card">
+        <h3>Natureza Total</h3>
+        <p>Área privativa rodeada por jardins e silêncio absoluto.</p>
+    </div>
+
+    <div class="card">
+        <h3>Experiência Premium</h3>
+        <p>Café da manhã especial e atendimento personalizado.</p>
+    </div>
+</section>
+
+<section id="reserva" class="reserva">
+    <h2>Reserve Agora</h2>
+    <p>Entre em contato e garanta sua estadia exclusiva.</p>
+    <button onclick="reservar()">Solicitar Reserva</button>
+</section>
+
+<footer>
+    <p>© 2026 Green Garden - Todos os direitos reservados</p>
+</footer>
+
+<script src="script.js"></script>
 </body>
 </html>
